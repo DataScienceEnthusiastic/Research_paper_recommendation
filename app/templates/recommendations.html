@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommendations - PaperRecommender</title>
+    <!-- Plotly removed -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f5f7fa; color: #1a1a2e; line-height: 1.6;
+        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+        nav {
+            background: #1a1a2e; padding: 15px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        nav .container { display: flex; align-items: center; justify-content: space-between; }
+        nav a { color: #e0e0e0; text-decoration: none; font-weight: 500; }
+        nav a:hover { color: #fff; }
+        .brand { font-size: 1.3rem; font-weight: 700; color: #fff !important; }
+        .btn {
+            display: inline-block; padding: 10px 20px;
+            background: #4361ee; color: #fff; border: none; border-radius: 6px;
+            font-size: 0.95rem; cursor: pointer; text-decoration: none;
+        }
+        .btn:hover { background: #3a56d4; }
+        .btn-outline {
+            background: transparent; border: 1px solid #4361ee; color: #4361ee;
+        }
+        .btn-outline:hover { background: #4361ee; color: #fff; }
+        .card {
+            background: #fff; border-radius: 8px; padding: 20px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 15px;
+        }
+        .card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.12); }
+        .badge {
+            display: inline-block; padding: 3px 10px; border-radius: 12px;
+            font-size: 0.8rem; background: #eef0ff; color: #4361ee; margin-right: 5px;
+        }
+        .badge-green { background: #d4edda; color: #155724; }
+        .text-muted { color: #666; font-size: 0.9rem; }
+        .text-small { font-size: 0.85rem; }
+        .mt-10 { margin-top: 10px; }
+        .mt-20 { margin-top: 20px; }
+        .mb-10 { margin-bottom: 10px; }
+        .mb-20 { margin-bottom: 20px; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .gap-10 { gap: 10px; }
+        h1 { font-size: 1.8rem; }
+        h2 { font-size: 1.4rem; }
+        h3 { font-size: 1.15rem; }
+        .footer { text-align: center; color: #999; padding: 40px 0; font-size: 0.85rem; }
+        .back-link { color: #4361ee; text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
+        .score { font-weight: 600; color: #4361ee; }
+        .rank-badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 32px; height: 32px; border-radius: 50%;
+            background: #4361ee; color: #fff; font-weight: 700; font-size: 0.9rem;
+        }
+        .score-bar {
+            height: 6px; border-radius: 3px; background: #e0e0e0; margin-top: 6px;
+        }
+        .score-bar-fill { height: 100%; border-radius: 3px; background: #4361ee; }
+        @media (max-width: 768px) {
+            .flex-between { flex-direction: column; align-items: start; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="/" class="brand">PaperRecommender</a>
+            <div><a href="/">Home</a></div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="/paper/{{ paper.id }}" class="back-link">&larr; Back to paper</a>
+
+        <div class="card mt-20">
+            <h1>Similar Papers</h1>
+            <p class="text-muted mt-10">
+                Based on: <strong>{{ paper.title }}</strong>
+                &nbsp;|&nbsp; Method: <span class="badge">{{ method }}</span>
+            </p>
+        </div>
+
+        <div class="card">
+            <h2 class="mb-10">Why these recommendations?</h2>
+            <p class="text-small text-muted">
+                Each paper below is ranked by how similar its content is to the paper you selected.
+                Similarity is measured using <strong>cosine similarity</strong> on {{ method }} feature vectors.
+                A score of 1.0 means the papers are nearly identical in content;
+                a score near 0 means they are unrelated.
+            </p>
+        </div>
+
+        {% for rec in recommendations %}
+        <div class="card">
+            <div class="flex-between">
+                <div class="flex gap-10" style="display: flex; align-items: center;">
+                    <span class="rank-badge">{{ loop.index }}</span>
+                    <div>
+                        <h3>
+                            <a href="/paper/{{ rec.id }}" style="color: #1a1a2e; text-decoration: none;">
+                                {{ rec.title }}
+                            </a>
+                        </h3>
+                        <p class="text-small text-muted mt-10">{{ rec.authors[:80] }}{% if rec.authors|length > 80 %}...{% endif %}</p>
+                    </div>
+                </div>
+                <div style="text-align: right; min-width: 120px;">
+                    <span class="score">{{ "%.0f" | format(rec.score * 100) }}%</span>
+                    <span class="text-small text-muted">similar</span>
+                    <div class="score-bar">
+                        <div class="score-bar-fill" style="width: {{ rec.score * 100 }}%;"></div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-small mt-10">{{ rec.abstract }}</p>
+            <div class="mt-10">
+                {% for cat in rec.categories.split()[:3] %}
+                    <span class="badge">{{ cat }}</span>
+                {% endfor %}
+                <a href="/cluster/{{ rec.id }}" class="btn btn-outline" style="float: right; padding: 5px 14px; font-size: 0.85rem;">
+                    Show on Map
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="footer">
+        Research Paper Recommender System &mdash; ArXiv Dataset
+    </div>
+</body>
+</html>

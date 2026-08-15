@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Landscape - PaperRecommender</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f5f7fa; color: #1a1a2e; line-height: 1.6;
+        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+        nav {
+            background: #1a1a2e; padding: 15px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        nav .container { display: flex; align-items: center; justify-content: space-between; }
+        nav a { color: #e0e0e0; text-decoration: none; font-weight: 500; }
+        nav a:hover { color: #fff; }
+        .brand { font-size: 1.3rem; font-weight: 700; color: #fff !important; }
+        .btn {
+            display: inline-block; padding: 10px 20px;
+            background: #4361ee; color: #fff; border: none; border-radius: 6px;
+            font-size: 0.95rem; cursor: pointer; text-decoration: none;
+        }
+        .btn:hover { background: #3a56d4; }
+        .btn-outline {
+            background: transparent; border: 1px solid #4361ee; color: #4361ee;
+        }
+        .btn-outline:hover { background: #4361ee; color: #fff; }
+        .card {
+            background: #fff; border-radius: 8px; padding: 20px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 15px;
+        }
+        .text-muted { color: #666; font-size: 0.9rem; }
+        .text-small { font-size: 0.85rem; }
+        .mt-10 { margin-top: 10px; }
+        .mt-20 { margin-top: 20px; }
+        .mb-20 { margin-bottom: 20px; }
+        h1 { font-size: 1.8rem; }
+        .footer { text-align: center; color: #999; padding: 40px 0; font-size: 0.85rem; }
+        .back-link { color: #4361ee; text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
+        .cluster-info {
+            background: #f8f9fc; border-radius: 8px; padding: 16px;
+            border-left: 3px solid #4361ee;
+            font-size: 0.9rem; margin-bottom: 15px;
+        }
+        .plot-container {
+            text-align: center;
+            width: 100%;
+            background: #fff;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+        .plot-container svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="/" class="brand">PaperRecommender</a>
+            <div><a href="/">Home</a></div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="/paper/{{ paper.id }}" class="back-link">&larr; Back to paper</a>
+
+        <div class="card mt-20">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <h1>Research Landscape Map</h1>
+                    <p class="text-muted mt-10">
+                        Showing <strong>{{ points_shown }} papers</strong>
+                        {% if points_shown != total_papers %}
+                            (sampled from {{ total_papers }} total)
+                        {% endif %}
+                        &mdash; Highlighting: {{ paper.title[:100] }}{% if paper.title|length > 100 %}...{% endif %}
+                    </p>
+                </div>
+                <div>
+                    <a href="/recommend/{{ paper.id }}" class="btn">View Recommendations</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="cluster-info">
+            <strong>Cluster ID:</strong> {{ cluster_id }}
+            &nbsp;|&nbsp; <strong>Keywords:</strong> {{ cluster_keywords }}
+        </div>
+
+        <div class="plot-container">
+            {{ cluster_svg | safe }}
+        </div>
+    </div>
+
+    <div class="footer">
+        Research Paper Recommender System &mdash; Built with ArXiv Dataset, scikit-learn &amp; Flask
+    </div>
+</body>
+</html>

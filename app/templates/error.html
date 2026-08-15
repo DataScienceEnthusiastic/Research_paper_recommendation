@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - PaperRecommender</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f5f7fa; color: #1a1a2e; line-height: 1.6;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; text-align: center; }
+        .error-box {
+            background: #fff; border-radius: 8px; padding: 40px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            border-left: 4px solid #e63946;
+        }
+        h1 { font-size: 2rem; color: #e63946; }
+        p { margin-top: 15px; color: #666; }
+        .btn {
+            display: inline-block; margin-top: 20px; padding: 10px 24px;
+            background: #4361ee; color: #fff; border: none; border-radius: 6px;
+            font-size: 0.95rem; cursor: pointer; text-decoration: none;
+        }
+        .btn:hover { background: #3a56d4; }
+        nav {
+            background: #1a1a2e; padding: 15px 0;
+        }
+        nav .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; }
+        nav a { color: #fff; text-decoration: none; font-weight: 700; font-size: 1.3rem; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container"><a href="/">PaperRecommender</a></div>
+    </nav>
+    <div class="container">
+        <div class="error-box">
+            <h1>Oops</h1>
+            <p>{{ message }}</p>
+            <a href="/" class="btn">Go Home</a>
+        </div>
+    </div>
+</body>
+</html>

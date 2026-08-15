@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PaperRecommender - Find Similar Research Papers</title>
+    <!-- Plotly removed: cluster map uses inline SVG now -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f5f7fa; color: #1a1a2e; line-height: 1.6;
+        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+        nav {
+            background: #1a1a2e; padding: 15px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        nav .container { display: flex; align-items: center; justify-content: space-between; }
+        nav a { color: #e0e0e0; text-decoration: none; font-weight: 500; }
+        nav a:hover { color: #fff; }
+        .brand { font-size: 1.3rem; font-weight: 700; color: #fff !important; }
+        .btn {
+            display: inline-block; padding: 10px 20px;
+            background: #4361ee; color: #fff; border: none; border-radius: 6px;
+            font-size: 0.95rem; cursor: pointer; text-decoration: none;
+        }
+        .btn:hover { background: #3a56d4; }
+        .btn-outline {
+            background: transparent; border: 1px solid #4361ee; color: #4361ee;
+        }
+        .btn-outline:hover { background: #4361ee; color: #fff; }
+        .card {
+            background: #fff; border-radius: 8px; padding: 20px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 15px;
+        }
+        .card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.12); }
+        .badge {
+            display: inline-block; padding: 3px 10px; border-radius: 12px;
+            font-size: 0.8rem; background: #eef0ff; color: #4361ee; margin-right: 5px;
+        }
+        .text-muted { color: #666; font-size: 0.9rem; }
+        .text-small { font-size: 0.85rem; }
+        .mt-10 { margin-top: 10px; }
+        .mt-20 { margin-top: 20px; }
+        .mb-20 { margin-bottom: 20px; }
+        .footer { text-align: center; color: #999; padding: 40px 0; font-size: 0.85rem; }
+        h1 { font-size: 2.2rem; }
+        .hero {
+            text-align: center; padding: 60px 20px 40px;
+        }
+        .hero p { font-size: 1.1rem; color: #555; max-width: 600px; margin: 15px auto 0; }
+        .search-box {
+            display: flex; gap: 10px; max-width: 600px; margin: 30px auto;
+        }
+        .search-box input {
+            flex: 1; padding: 14px 18px; border: 2px solid #ddd; border-radius: 8px;
+            font-size: 1rem;
+        }
+        .search-box input:focus { outline: none; border-color: #4361ee; }
+        .search-box button { padding: 14px 28px; }
+        .how-it-works {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 40px 0;
+        }
+        .step-card {
+            background: #fff; border-radius: 8px; padding: 24px; text-align: center;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+        .step-number {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: #4361ee; color: #fff; display: inline-flex;
+            align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem;
+            margin-bottom: 12px;
+        }
+        @media (max-width: 768px) {
+            .how-it-works { grid-template-columns: 1fr; }
+            .search-box { flex-direction: column; }
+            .hero h1 { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="/" class="brand">PaperRecommender</a>
+            <div><a href="/">Home</a></div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <h1>Discover Research Papers</h1>
+            <p>
+                Find similar academic papers using AI-powered text analysis.
+                Search by keyword to get started.
+            </p>
+
+            <form class="search-box" action="/search" method="GET">
+                <input type="text" name="q" placeholder="e.g. transformer attention, graph neural networks, reinforcement learning...">
+                <button type="submit" class="btn">Search</button>
+            </form>
+        </div>
+
+        <div class="how-it-works">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h3>Search</h3>
+                <p class="text-small text-muted mt-10">Enter a keyword or topic to find relevant papers from the ArXiv dataset.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3>Select</h3>
+                <p class="text-small text-muted mt-10">Choose a paper that interests you and see its full details.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h3>Discover</h3>
+                <p class="text-small text-muted mt-10">Get recommendations of similar papers and explore the research landscape.</p>
+            </div>
+        </div>
+
+        <div class="card" style="background: #f0f4ff; border: 1px solid #d4e0ff;">
+            <h2>How It Works</h2>
+            <p class="text-small mt-10">
+                <strong>1. Feature Extraction:</strong> Each paper's title and abstract are converted
+                into a numerical vector using TF-IDF (word importance scoring).
+            </p>
+            <p class="text-small mt-10">
+                <strong>2. Similarity Search:</strong> Cosine similarity measures the angle between
+                paper vectors. Smaller angle = more similar content.
+            </p>
+            <p class="text-small mt-10">
+                <strong>3. Global Clustering:</strong> All papers are grouped into topic clusters
+                using K-Means (with optimal K determined by silhouette score).
+                The cluster map shows the full research landscape.
+            </p>
+        </div>
+
+        {% if papers %}
+        <h2 class="mt-20 mb-20">Sample Papers</h2>
+        {% for paper in papers %}
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <h3>
+                        <a href="/paper/{{ paper.id }}" style="color: #1a1a2e; text-decoration: none;">
+                            {{ paper.title[:100] }}{% if paper.title|length > 100 %}...{% endif %}
+                        </a>
+                    </h3>
+                    <p class="text-small text-muted mt-10">
+                        <strong>Authors:</strong> {{ paper.authors[:80] }}{% if paper.authors|length > 80 %}...{% endif %}
+                    </p>
+                </div>
+                <div>
+                    <a href="/recommend/{{ paper.id }}" class="btn btn-outline" style="padding: 6px 14px; font-size: 0.85rem;">
+                        Find Similar
+                    </a>
+                </div>
+            </div>
+            <div class="mt-10">
+                {% for cat in paper.categories.split()[:3] %}
+                    <span class="badge">{{ cat }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+
+    <div class="footer">
+        Research Paper Recommender System &mdash; Built with ArXiv Dataset, scikit-learn, Flask &amp; Plotly
+    </div>
+</body>
+</html>
